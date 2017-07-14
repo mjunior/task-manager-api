@@ -32,7 +32,6 @@ RSpec.describe 'Users API', type: :request do
     end
   end
   
-
   describe 'POST /users' do
 
     before do
