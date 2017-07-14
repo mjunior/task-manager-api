@@ -48,8 +48,8 @@ RSpec.describe 'Users API', type: :request do
       end
 
       it 'Retorna o JSON do usuário cadastrado' do
-        user_response = JSON.parse(response.body)
-        expect(user_response['email']).to eq(user_params[:email])
+        user_response = JSON.parse(response.body, symbolize_names: true)
+        expect(user_response[:email]).to eq(user_params[:email])
       end
     end
 
@@ -61,8 +61,8 @@ RSpec.describe 'Users API', type: :request do
       end
 
       it 'Retorna mensagens de errors' do
-        user_response = JSON.parse(response.body)
-        expect(user_response).to have_key('errors')
+        user_response = JSON.parse(response.body, symbolize_names: true)
+        expect(user_response).to have_key(:errors)
       end
     end
   end
