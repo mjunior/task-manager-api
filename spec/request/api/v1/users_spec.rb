@@ -9,8 +9,8 @@ RSpec.describe 'Users API', type: :request do
 
   describe 'GET /users/:id' do
     before do
-      headers = { 'Accept' => 'application/vnd.taskmanager.v1' }
-      get "/users/#{user_id}", params: {}, headers: headers
+      header = { 'Accept' => 'application/vnd.taskmanager.v1' }
+      get "/users/#{user_id}", params: {}, headers: header
     end
 
     context 'Quando o usuário existe' do
@@ -31,5 +31,39 @@ RSpec.describe 'Users API', type: :request do
       end
     end
   end
+  
 
+  describe 'POST /users' do
+
+    before do
+      header = {'Accept' => 'application/vnd.taskmanager.v1'}
+      post '/users', params: {user: user_params}, headers: header
+    end
+
+    context 'Quando os parametros para criação do usuário são validos' do
+      let(:user_params){ attributes_for(:user) }
+
+      it 'Retorna código 201 :created' do
+        expect(response).to have_http_status(:created)
+      end
+
+      it 'Retorna o JSON do usuário cadastrado' do
+        user_response = JSON.parse(response.body)
+        expect(user_response['email']).to eq(user_params[:email])
+      end
+    end
+
+    context 'Quando os parametros para criação do usuário NÃO são validos' do 
+      let(:user_params){ attributes_for(:user, email: "invalid_mail") }
+
+      it 'Retorna codigo unprocessable_entity' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'Retorna mensagens de errors' do
+        user_response = JSON.parse(response.body)
+        expect(user_response).to have_key('errors')
+      end
+    end
+  end
 end
