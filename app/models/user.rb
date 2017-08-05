@@ -5,6 +5,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
   attr_accessor :name
 
-  validates :email, uniqueness: true
+  validates :email, :auth_token, uniqueness: true
 
+
+  def info
+    "#{email} - #{created_at}"
+  end
 end
