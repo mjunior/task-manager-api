@@ -20,6 +20,25 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def update
+    user = User.find(params[:id])
+    if user.update(user_params)
+      render json: user, status: :ok
+    else
+      render json: {errors: user.errors}, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    begin
+      if User.destroy(params[:id])
+        head :no_content
+      end
+    rescue ActiveRecord::RecordNotFound
+      head 404
+    end
+  end
+
   private
 
   def user_params
