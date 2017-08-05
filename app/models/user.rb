@@ -9,6 +9,6 @@ class User < ApplicationRecord
 
 
   def info
-    "#{email} - #{created_at}"
+    "#{email} - #{created_at} - Token: #{Devise.friendly_token}"
   end
 end
