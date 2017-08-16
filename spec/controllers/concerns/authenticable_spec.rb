@@ -19,4 +19,28 @@ RSpec.describe Authenticable do
       expect(app_controller.current_user).to eq(user)
     end
   end
+
+  describe '#authenticate_with_token!' do
+    controller do
+      before_action :authenticate_with_token!
+
+      def restricted_action; end
+    end
+
+    context 'Quando não houver nenhum usuário logado' do
+      before do
+        allow(app_controller).to receive(:current_user).and_return(nil)
+        routes.draw { get 'restricted_action' => 'anonymous#restricted_action'}
+        get :restricted_action
+      end
+      
+      it 'Retorna HTTP STATUS :unauthorized' do
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it 'Retorno com mensagem de erro' do
+        expect(json_body).to have_key(:errors)
+      end
+    end
+  end
 end
