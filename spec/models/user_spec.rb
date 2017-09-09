@@ -6,6 +6,7 @@ RSpec.describe User, type: :model do
   let(:fake_token) { 'abc-123_xyz[987]' }
 
   it { is_expected.to validate_presence_of(:email) }
+  it { is_expected.to have_many(:tasks) }
   it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
   it { is_expected.to validate_confirmation_of(:password) }
   it { is_expected.to allow_value('meu@email.com.br').for(:password) }
