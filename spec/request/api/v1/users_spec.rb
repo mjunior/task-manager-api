@@ -38,7 +38,6 @@ RSpec.describe 'Users API', type: :request do
   end
   
   describe 'POST /users' do
-
     before do
       post '/users', params: {user: user_params}.to_json, headers: headers
     end
