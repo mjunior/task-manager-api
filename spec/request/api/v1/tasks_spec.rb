@@ -41,4 +41,47 @@ RSpec.describe 'Tasks Api', type: :request do
       expect(json_body[:title]).to eq(task.title)
     end
   end
+
+  describe 'POST /tasks' do
+    let(:task_params){ attributes_for(:task) }
+    
+    before do
+      post '/tasks', params: { task: task_params }.to_json, headers: headers
+    end
+
+    context 'Quando os dados estão corretos' do
+      it 'retorna http status 201 :created' do
+        expect(response).to have_http_status(:created)
+      end
+
+      it 'Certifica-se que tarefa foi salva no bancoe' do
+        expect(Task.find_by(title: task_params[:title])).not_to be_nil
+      end
+
+      it 'Retorna as informações da tarefa criada' do
+        expect(json_body[:title]).to eq(task_params[:title])
+      end
+
+      it 'Cerifica-se que a tarefa esta sendo associada ao usuário logado' do
+        expect(json_body[:user_id]).to eq(user.id)
+      end
+    end
+
+    context 'Quando os dados são INVALIDOS' do
+      let(:task_params){ attributes_for(:task, title: ' ')}
+
+      it 'Retorna status code 422 :unprocessable_entity' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'Certifica-se que a tarefa não foi salva' do
+        expect(Task.find_by(title: task_params[:title])).to be_nil
+      end
+
+      it 'Certifica-se que JSON tem erro de Titulo' do
+        expect(json_body[:errors]).to have_key(:title)
+      end
+    end
+
+  end
 end
