@@ -82,6 +82,43 @@ RSpec.describe 'Tasks Api', type: :request do
         expect(json_body[:errors]).to have_key(:title)
       end
     end
+  end
 
+  describe 'PATCH /tasks/:id' do
+    let!(:task){ create(:task, user_id: user.id)}
+    let!(:task_params){ {title: "Atualizando titulo da tarefa"} }
+
+    before do
+      put "/tasks/#{task.id}", params: {task: task_params}.to_json, headers: headers
+    end
+
+    context 'Quando os dados de update estão corretos' do      
+      it 'Retorna codigo 200 :ok' do
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'Certifica-se que o campo foi atualizado' do
+        expect(json_body[:title]).to eq(task_params[:title])
+      end
+
+      it 'Certifica-se que o os dadaos foram atualizados no banco' do
+        expect(Task.find_by(title: task_params[:title])).not_to be_nil
+      end
+    end
+
+    context 'Quando os dados de update NÂO estão corretos' do
+       let!(:task_params){ {title: " "} }      
+      it 'Retorna codigo 422 :unprocessable_entity' do
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'Certifica-se do erro no campo titulo' do
+        expect(json_body[:errors]).to have_key(:title)
+      end
+
+      it 'Certifica-se que o os dadaos NÂO foram atualizados no banco' do
+        expect(Task.find_by(title: task_params[:title])).to be_nil
+      end
+    end
   end
 end
