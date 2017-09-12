@@ -1,6 +1,6 @@
 class Api::V1::TasksController < ApplicationController
   before_action :authenticate_with_token!
-  before_action :set_task, only: [:show, :update]
+  before_action :set_task, only: [:show, :update, :destroy]
 
   def index
     tasks = current_user.tasks
@@ -26,6 +26,11 @@ class Api::V1::TasksController < ApplicationController
     else
       render json: {errors: @task.errors}, status: :unprocessable_entity
     end
+  end
+
+  def destroy 
+    @task.destroy
+    head :no_content
   end
 
   private
